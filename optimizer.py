@@ -5,6 +5,7 @@
 #                           min_vel, min_pipe_rhae, min_village_rhae)
 from opti_classess import (Pipe)
 from typing import Dict
+from numpy import isnan
 
 
 def give_parent_pipe_details(child_start_node, ordered_df):
@@ -158,20 +159,15 @@ def rhae_low_increase_iop(pipe, calculated_dict, ordered_df, min_vel, max_vel, m
 
 
 
-async  def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_rhae, iop_list):
+def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_rhae, iop_list):
     calculated_dict: Dict[int, Pipe] = {}
 
     i = len(calculated_dict)
 
     leng_of_order_df = len(ordered_df)
 
-    log_message = f"Total No.of pipes: {leng_of_order_df-1}"
-
     while i < len(ordered_df):
         print("---->", i)
-        if i==2169:
-            print(".....")
-        log_message = f"Currently Optimizing: {i}"
 
         pipe_from_df = ordered_df.loc[i]
 
@@ -182,9 +178,10 @@ async  def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_vi
         rhas = 0 if parent_pipe is None else calculated_dict[parent_pipe_index].rhae
 
         # del pipe_from_df['old_iop']
+        # print("...is nanan........", isnan(pipe_from_df['manual_iop']))
 
-        if 'old_iop' in pipe_from_df.index:
-            del pipe_from_df['old_iop']
+        if isnan(pipe_from_df['manual_iop']):
+            pipe_from_df['manual_iop'] = None
 
         current_pipe = Pipe(**pipe_from_df, rhas=rhas, index=i, min_vel=min_vel, max_vel=max_vel, iop_list=iop_list)
 
@@ -192,12 +189,16 @@ async  def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_vi
 
         current_pipe.parent_pipe_index = None if parent_pipe is None else parent_pipe_index
 
-        if check_rhae(current_pipe, min_village_rhae, min_pipe_rhae):
-            calculated_dict[i] = current_pipe
-            i = len(calculated_dict)
+        if current_pipe.manual_iop is None:
+            if check_rhae(current_pipe, min_village_rhae, min_pipe_rhae):
+                calculated_dict[i] = current_pipe
+                i = len(calculated_dict)
+            else:
+                current_pipe = rhae_low_increase_iop(current_pipe, calculated_dict, ordered_df, min_vel=min_vel, max_vel=max_vel,
+                                                   min_pipe_rhae=min_pipe_rhae, min_village_rhae=min_village_rhae)
+                calculated_dict[i] = current_pipe
+                i = len(calculated_dict)
         else:
-            current_pipe = rhae_low_increase_iop(current_pipe, calculated_dict, ordered_df, min_vel=min_vel, max_vel=max_vel,
-                                               min_pipe_rhae=min_pipe_rhae, min_village_rhae=min_village_rhae)
             calculated_dict[i] = current_pipe
             i = len(calculated_dict)
 

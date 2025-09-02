@@ -9,7 +9,7 @@ def find_velocity_by_formula(discharge, id_of_pipe):
 
 class Pipe:
     def __init__(self,index, start_node, end_node, length, discharge,
-                 ground_level_start, ground_level_end, rhas, m_iop, min_vel=0.6, max_vel=3,
+                 ground_level_start, ground_level_end, rhas, manual_iop, min_vel=0.6, max_vel=3,
                  iop_list=None, parent_pipe_index=None):
         if iop_list is None:
             iop_list = IOP
@@ -25,7 +25,7 @@ class Pipe:
         self.ground_level_end = float(ground_level_end)
         self.is_village_endpoint = "V" in self.end_node
         self.allowed_iops = self.find_allowed_iops()
-        self.manual_iop = m_iop
+        self.manual_iop = manual_iop
         self.iop = self.allowed_iops[0] if self.manual_iop is None else self.manual_iop
         self.parent_iop = self.iop_list[-1]
         self.parent_pipe_index = parent_pipe_index
