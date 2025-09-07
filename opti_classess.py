@@ -34,6 +34,7 @@ class Pipe:
         self.diff_in_g_level = self.ground_level_start - self.ground_level_end
         self.fhl = self.find_fhl()
         self.rhae = self.find_rhae()
+        self.opti_count = []
 
 
 

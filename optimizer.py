@@ -6,6 +6,7 @@
 from opti_classess import (Pipe)
 from typing import Dict
 from numpy import isnan
+import pandas as pd
 
 
 def give_parent_pipe_details(child_start_node, ordered_df):
@@ -97,6 +98,7 @@ def need_to_increase_parent_iop(pipe, calculated_dict, ordered_df, min_vel, max_
                                                  min_pipe_rhae=min_pipe_rhae, min_village_rhae=min_village_rhae
                                                  )
 
+    p_pipe.opti_count.append(pipe.end_node)
 
     calculated_dict[iop_increased_p_pipe.index] = iop_increased_p_pipe
 
@@ -164,7 +166,6 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
 
     i = len(calculated_dict)
 
-    leng_of_order_df = len(ordered_df)
 
     while i < len(ordered_df):
         print("---->", i)
@@ -181,7 +182,11 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
         # print("...is nanan........", isnan(pipe_from_df['manual_iop']))
 
         if isnan(pipe_from_df['manual_iop']):
+            pipe_from_df = ordered_df.loc[i].copy()
             pipe_from_df['manual_iop'] = None
+
+        # if isnan(pipe_from_df['manual_iop']):
+        #     ordered_df.loc[i, 'manual_iop'] = None
 
         current_pipe = Pipe(**pipe_from_df, rhas=rhas, index=i, min_vel=min_vel, max_vel=max_vel, iop_list=iop_list)
 
@@ -210,6 +215,7 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
         ordered_df.loc[key, 'available_residual_head_at_start'] = value.rhas
         ordered_df.loc[key, 'residual_head_at_end'] = value.rhae
         ordered_df.loc[key, 'allowed_iops'] = str(value.allowed_iops)
+        ordered_df.loc[key, 'opti_count'] = str(value.opti_count)
 
     # ordered_df.to_excel("opti.xlsx")
 
