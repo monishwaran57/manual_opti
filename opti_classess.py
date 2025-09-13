@@ -45,11 +45,11 @@ class Pipe:
 
     def find_fhl(self, cr_value=1):
         fhl = ((self.length * (self.discharge / cr_value) ** 1.81) / (994.62 * (self.iop / 1000) ** 4.81)) * 1.1
-        return float(round(fhl, 2))
+        return float(round(fhl, 6))
 
     def find_rhae(self):
         rhae = (self.diff_in_g_level + self.rhas) - self.fhl
-        return float(round(rhae, 2))
+        return float(round(rhae, 6))
 
     def find_allowed_iops(self):
         allowed_iops = []

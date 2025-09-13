@@ -166,6 +166,11 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
 
     i = len(calculated_dict)
 
+    if 'opti_count' in ordered_df.columns:
+        ordered_df.drop(columns=['opti_count','new_iop','new_velocity','new_fhl','available_residual_head_at_start','residual_head_at_end','allowed_iops'], inplace=True)
+        print("'new_iop','new_velocity','new_fhl','available_residual_head_at_start','residual_head_at_end','allowed_iops', opti count found and deleted")
+    else:
+        print("'new_iop','new_velocity','new_fhl','available_residual_head_at_start','residual_head_at_end','allowed_iops', opti count not found, so nothing deleted")
 
     while i < len(ordered_df):
         print("---->", i)
@@ -184,6 +189,7 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
         if isnan(pipe_from_df['manual_iop']):
             pipe_from_df = ordered_df.loc[i].copy()
             pipe_from_df['manual_iop'] = None
+
 
         # if isnan(pipe_from_df['manual_iop']):
         #     ordered_df.loc[i, 'manual_iop'] = None

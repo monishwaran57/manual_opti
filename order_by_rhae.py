@@ -1,5 +1,6 @@
 from opti_classess import Pipe
 from typing import Dict
+from numpy import isnan
 
 def give_parent_pipe_details(child_start_node, ordered_df):
     matches = ordered_df.loc[ordered_df['end_node'] == child_start_node]
@@ -36,6 +37,10 @@ def order_df_with_rhae_minimal_value(ordered_df, min_vel, max_vel, iop_list):
         PARENT_IOP = None if parent_pipe_index is None else calci_dict[parent_pipe_index].iop
 
         RHAS = 0 if parent_pipe_index is None else calci_dict[parent_pipe_index].rhae
+
+        if isnan(row['manual_iop']):
+            row = ordered_df.loc[i].copy()
+            row['manual_iop'] = None
 
 
         current_pipe = Pipe(**row, rhas=RHAS, index=i, min_vel=min_vel, max_vel=max_vel, iop_list=iop_list)
@@ -86,7 +91,7 @@ def order_df_with_rhae_minimal_value(ordered_df, min_vel, max_vel, iop_list):
 
     new_order_df = new_order_df.reset_index(drop=True)
 
-    # new_order_df.to_excel("neworder.xlsx")
+    new_order_df.to_excel("neworder.xlsx")
 
     new_order_df = new_order_df.drop(["new_iop","new_velocity","new_fhl","available_residual_head_at_start","residual_head_at_end"], axis=1)
 
