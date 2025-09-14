@@ -1,11 +1,13 @@
 IOP = [96.8, 111.6, 125, 142.8, 160.8, 178.6, 201, 223.4, 250.4, 314.8, 366, 416.4, 466.8, 518, 619.6, 700, 800, 900,
        1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500]
 
+# def find_velocity_by_formula(discharge, id_of_pipe):
+#     velocity = discharge * (4 / (3.14 * (id_of_pipe / 1000) ** 2))
+#     return round(velocity, 5)
+
 def find_velocity_by_formula(discharge, id_of_pipe):
-    velocity = discharge * (4 / (3.14 * (id_of_pipe / 1000) ** 2))
+    velocity = (discharge * 4) / (3.14 * (id_of_pipe / 1000) ** 2)
     return round(velocity, 5)
-
-
 
 class Pipe:
     def __init__(self,index, start_node, end_node, length, discharge,

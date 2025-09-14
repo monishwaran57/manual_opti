@@ -103,8 +103,12 @@ def need_to_increase_parent_iop(pipe, calculated_dict, ordered_df, min_vel, max_
     calculated_dict[iop_increased_p_pipe.index] = iop_increased_p_pipe
 
     recalculate_rhae_for_childs(iop_increased_p_pipe, calculated_dict, ordered_df)
-
-    pipe.parent_iop = iop_increased_p_pipe.iop
+    # ******************************************************************************************************************
+    """before parent iop was assigned using the top iop increased parent p pipe, but the exact parent iop need to be set, now rectified"""
+    p_pipe_dict = give_parent_pipe_details(child_start_node=pipe.start_node, ordered_df=ordered_df)
+    p_pipe_index =  None if p_pipe_dict is None else p_pipe_dict['index']
+    pipe.parent_iop = pipe.allowed_iops[-1] if p_pipe_dict is None else calculated_dict[p_pipe_index].iop
+    # ******************************************************************************************************************
     pipe.rhas = calculated_dict[pipe.parent_pipe_index].rhae
     pipe.rhae = pipe.find_rhae()
 
@@ -135,6 +139,7 @@ def rhae_low_increase_iop(pipe, calculated_dict, ordered_df, min_vel, max_vel, m
     increased_iop_index = current_iop_index + 1
     while increased_iop_index < len(pipe.allowed_iops):
         increased_iop = pipe.allowed_iops[increased_iop_index]
+        print("pipe------->", pipe.end_node, "iop=",pipe.iop,"parent_iop=", pipe.parent_iop)
         if increased_iop <= pipe.parent_iop:
             pipe.iop = increased_iop
             pipe.velocity = pipe.find_velocity()
@@ -175,6 +180,9 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
     while i < len(ordered_df):
         print("---->", i)
 
+        if i == 10:
+            print("v222222222222")
+
         pipe_from_df = ordered_df.loc[i]
 
         parent_pipe = give_parent_pipe_details(child_start_node=pipe_from_df['start_node'], ordered_df=ordered_df)
@@ -199,6 +207,8 @@ def optimize_pipe_ids(ordered_df, min_vel, max_vel, min_pipe_rhae, min_village_r
         current_pipe.parent_iop = current_pipe.allowed_iops[-1] if parent_pipe is None else calculated_dict[parent_pipe_index].iop
 
         current_pipe.parent_pipe_index = None if parent_pipe is None else parent_pipe_index
+
+        print("......current_pipe", current_pipe.__dict__)
 
         if current_pipe.manual_iop is None:
             if check_rhae(current_pipe, min_village_rhae, min_pipe_rhae):

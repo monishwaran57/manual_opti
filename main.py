@@ -7,9 +7,9 @@ from reorder import find_rows_with_different_V_endpoints_in_df, create_order_lis
 MIN_VEL = 0.6
 MAX_VEL = 3
 MIN_PIPE_RHAE = 0
-MIN_VILLAGE_RHAE = 28
+MIN_VILLAGE_RHAE = 36
 
-input_df = pd.read_excel("sample.xlsx", sheet_name="Sheet1")
+input_df = pd.read_excel("test_case code.xlsx", sheet_name="Sheet1")
 
 dfs_ordered_df = create_dfs_ordered_df(input_df)
 
