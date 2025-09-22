@@ -3,6 +3,7 @@ from dfs_sort import create_dfs_ordered_df
 from optimizer import optimize_pipe_ids
 from order_by_rhae import order_df_with_rhae_minimal_value
 from reorder import find_rows_with_different_V_endpoints_in_df, create_order_list_to_arrange
+from tonnage import give_ton_output
 
 MIN_VEL = 0.6
 MAX_VEL = 3
@@ -29,4 +30,8 @@ main_df_with_new_order = processed_df.loc[swapped_new_main_df_order_list]
 second_time_processed_df = optimize_pipe_ids(ordered_df=main_df_with_new_order, min_vel=MIN_VEL, max_vel=MAX_VEL, min_pipe_rhae=MIN_PIPE_RHAE,
                   min_village_rhae=MIN_VILLAGE_RHAE, iop_list=None)
 
-second_time_processed_df.to_excel("second_process.xlsx")
+tonnage_df = pd.read_excel('tonnage.xlsx')
+
+tonned_pipes_df = give_ton_output(tonnage_df=tonnage_df, pipes_df=second_time_processed_df)
+
+tonned_pipes_df.to_excel("tonned_pipes.xlsx")
